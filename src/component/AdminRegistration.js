@@ -1,20 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import '../assets/plugins/fontawesome-free/css/all.min.css';
 import '../assets/plugins/icheck-bootstrap/icheck-bootstrap.min.css';
 import '../assets/dist/css/adminlte.min.css';
-import { json, Link, NavLink } from 'react-router-dom';
+import { json, Link, Navigate, NavLink, useNavigate } from 'react-router-dom';
 import { Form, Field } from 'react-final-form'
 import {postAdmin} from '../redux/ActionCreators';
 import { baseUrl } from "../shared/baseUrl";
+import SweetAlert2 from "react-sweetalert2";
+
 
 const required = value => (value ? undefined : 'Required');
 const composeValidators = (...validators) => value =>
   validators.reduce((error, validator) => error || validator(value), undefined)
 const minValue = min => value =>
 isNaN(value) || value >= min ? undefined : `Should be greater than ${min}`
-
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
-
 let onSubmit = async (e) => {
     try {
         const newAdmin = {
@@ -24,7 +24,7 @@ let onSubmit = async (e) => {
             password: e.password,
             username: e.username,
         }
-      let res = await fetch(baseUrl+"users/signup", {
+      let res = await fetch(baseUrl+"admin/new-signup", {
         method: "POST",
         body: JSON.stringify(newAdmin),
         headers: {
@@ -34,9 +34,16 @@ let onSubmit = async (e) => {
       });
       let resJson = await res.json();
       if (res.status === 200) {
-        alert("User created successfully");
+        if(resJson.status == true) {
+            alert('Admin Created!');
+            const navigate = useNavigate();
+            navigate('/')
+        }
+        else {
+            alert(resJson.message);
+        }
       } else {
-        alert("Some error occured");
+        alert(resJson.message);
       }
     } catch (err) {
       console.log(err);
@@ -44,6 +51,8 @@ let onSubmit = async (e) => {
   };
 
 function AdminRegistration(props) {
+    // const [swalProps, setSwalProps] = useState({});
+
     return(
         <div className="hold-transition login-page">
             <div className="login-box">
@@ -53,7 +62,8 @@ function AdminRegistration(props) {
                 <div className="card">
                     <div className="card-body login-card-body">
                     <p className="login-box-msg">New Registration</p>
-                        <Form onSubmit={onSubmit} postAdmin={props.postAdmin}
+                        <SweetAlert2></SweetAlert2>
+                        <Form onSubmit={onSubmit}
                             initialValues={{}}
                             render={({handleSubmit, form, submitting, pristine, values }) => (
                                 <form onSubmit={handleSubmit}>
