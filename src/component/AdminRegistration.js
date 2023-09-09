@@ -1,7 +1,4 @@
 import React, { useState } from "react";
-import '../assets/plugins/fontawesome-free/css/all.min.css';
-import '../assets/plugins/icheck-bootstrap/icheck-bootstrap.min.css';
-import '../assets/dist/css/adminlte.min.css';
 import { json, Link, Navigate, NavLink, useNavigate } from 'react-router-dom';
 import { Form, Field } from 'react-final-form'
 import {postAdmin} from '../redux/ActionCreators';
@@ -36,8 +33,6 @@ let onSubmit = async (e) => {
       if (res.status === 200) {
         if(resJson.status == true) {
             alert('Admin Created!');
-            const navigate = useNavigate();
-            navigate('/')
         }
         else {
             alert(resJson.message);
