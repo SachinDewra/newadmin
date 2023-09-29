@@ -9,6 +9,7 @@ import AuthService from '../../services/auth.service';
 import { connect } from "react-redux";
 import { withRouter } from "../../common/with-router.js";
 import BoardPage from "./Contents/BoardsPage.js";
+import { fetchBoards,postBoard } from '../../redux/ActionCreators';
 
 const mapStateToProps = state => {
   return {
@@ -17,7 +18,8 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-    
+  postBoard: (name, short_name, position, image,status) => dispatch(postBoard(name, short_name, position, image,status)),
+  fetchBoards: () => {dispatch(fetchBoards())},
 })
 
 
@@ -59,6 +61,7 @@ class AdminHome extends Component {
         EventBus.on("logout", () => {
             this.logOut();
         });
+        this.props.fetchBoards();
     }
 
     componentWillUnmount() {
@@ -71,7 +74,7 @@ class AdminHome extends Component {
           currentUser: undefined,
         });
       }
-
+    
     render() {
         if (this.state.redirect) {
             return <Navigate to={this.state.redirect} />
@@ -83,7 +86,9 @@ class AdminHome extends Component {
                 <Sidebar>
                 </Sidebar>
                 <Routes>
-                    <Route path="/boards" element={<BoardPage boards={this.props.boards} title='Borad List'></BoardPage>}  />
+                    <Route path="/boards" element={<BoardPage boards={this.props.boards.boards} 
+                      boardsLoading={this.props.boards.isLoading}
+                      boardErrMess={this.props.boards.errMess} addstatus={this.props.boards.addstatus} postBoard={this.props.postBoard} title='Borad List'></BoardPage>}  />
                 </Routes>
                 <Footer/>
                 
@@ -92,4 +97,4 @@ class AdminHome extends Component {
     }
 }
 
-export default withRouter(connect(mapStateToProps)(AdminHome));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AdminHome));
