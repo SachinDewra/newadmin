@@ -9,7 +9,7 @@ import { Component } from "react";
 import { Form, Field } from 'react-final-form';
 import FileField from "./FileField.tsx";
 import Swal from "sweetalert2";
-function RenderMenuItem({ board }) {
+function RenderMenuItem({ board ,deleteBoard, editBoard}) {
     return(
         <tr className="gradeA" role="row" key={board._id}>
             <td>{board._id}.</td>
@@ -24,12 +24,9 @@ function RenderMenuItem({ board }) {
                 <CardImg height="100px" width="10px" src={baseUrl+'public/boards/'+board.image} alt={board.name}></CardImg>
             </td>
             <td>
-                <a className="btn btn-app">
-                  <i className="fas fa-edit"></i> Edit
-                </a>
-                <a className="btn btn-app">
-                  <i className="fas fa-trash"></i> Delete``
-                </a>
+                <Edit board={board} editBoard={editBoard}></Edit>
+                <Delete boardid={board._id} deleteBoard={deleteBoard}></Delete>
+                
             </td>
         </tr>
     );
@@ -57,7 +54,7 @@ function BoardPage (props) {
     else if (props.boards !== undefined ) {
         const listdata = props.boards.map((board, key) => {
             return (
-                <RenderMenuItem board={board} key={key} ></RenderMenuItem>
+                <RenderMenuItem board={board} key={key} deleteBoard={props.deleteBoard} editBoard={props.editBoard} ></RenderMenuItem>
             )
         })
         return (
@@ -111,15 +108,6 @@ function BoardPage (props) {
                                         {listdata}
                                      </tbody>
                                   </table>
-                               </div>
-                               <div className="card-footer clearfix">
-                                  <ul className="pagination pagination-sm m-0 float-right">
-                                     <li className="page-item"><a className="page-link" href="#">&laquo;</a></li>
-                                     <li className="page-item"><a className="page-link" href="#">1</a></li>
-                                     <li className="page-item"><a className="page-link" href="#">2</a></li>
-                                     <li className="page-item"><a className="page-link" href="#">3</a></li>
-                                     <li className="page-item"><a className="page-link" href="#">&raquo;</a></li>
-                                  </ul>
                                </div>
                             </div>
                          </div>
@@ -280,4 +268,234 @@ class AddForm extends Component {
         )
     }
 }
+
+class Edit extends Component {
+    constructor(props) {
+        super(props);
+        
+        this.state = {
+            isModalOpen: false
+        }
+        this.addtoggleModal = this.addtoggleModal.bind(this);
+    }
+
+    addtoggleModal() {
+        this.setState({isModalOpen: !this.state.isModalOpen})
+    }
+
+    render() {
+        const required = value => (value ? undefined : 'Required')
+        const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+
+        const onSubmit = async values => {
+            await sleep(300)
+            this.props.postBoard(values.name,
+                 values.short_name,values.position,values.files[0],values.status)
+            .then(response => {
+                if(response.status) {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Board Add Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                      });
+                      this.addtoggleModal();
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'error',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                      })
+                }
+                })
+            .catch(error => {console.log('Post Board', error.message);
+                    alert('Your Board could not be posted\nError: '+ error.message)})
+            
+            
+        }
+        
+        return (
+            
+            <div className="row">
+            <a className="btn btn-app" onClick={this.addtoggleModal}>
+                <i className="fas fa-edit"></i> Edit
+            </a>
+            <Modal className="modal-lg" isOpen={this.state.isModalOpen} toggle={this.addtoggleModal}>
+                    <ModalHeader toggle={this.addtoggleModal}>Edit Board</ModalHeader>
+                    <ModalBody>
+                    <Form onSubmit={onSubmit} intialvalues={{name:this.props.board.name}} 
+                        render={({handleSubmit,form, submitting, pristine, values}) => (
+                            <form onSubmit={handleSubmit}>
+                                <Field initialValue={initialValue.name} name="name" validate={required}>
+                                    {({input,meta}) => (
+                                        <div className="input-group mb-3">
+                                            <input value={values.name} className="form-control" type="text" placeholder="Name"></input>
+                                        <div className="input-group-append">
+                                        <div className="input-group-text">
+                                            <span className="fas fa-info"></span>
+                                        </div>
+                                        {meta.error && meta.touched && <span>{meta.error}</span>}
+                                        </div>
+                                    </div>
+                                    )}
+                                </Field>
+                                <Field name="short_name" validate={required}>
+                                    {({input,meta}) => (
+                                        <div className="input-group mb-3">
+                                            <input className="form-control" {...input} type="text" placeholder="Short Name"></input>
+                                        <div className="input-group-append">
+                                        <div className="input-group-text">
+                                            <span className="fas fa-info"></span>
+                                        </div>
+                                        {meta.error && meta.touched && <span>{meta.error}</span>}
+                                        </div>
+                                    </div>
+                                    )}
+                                </Field>
+                                <Field name="position" validate={required}>
+                                    {({input,meta}) => (
+                                        <div className="input-group mb-3">
+                                            <input className="form-control" {...input} type="number" placeholder="Position" min={1}></input>
+                                        <div className="input-group-append">
+                                        <div className="input-group-text">
+                                            <span className="fas fa-info"></span>
+                                        </div>
+                                        {meta.error && meta.touched && <span>{meta.error}</span>}
+                                        </div>
+                                    </div>
+                                    )}
+                                </Field>
+                                {/* <Field name="image" validate={required}>
+                                    {({input,meta}) => (
+                                        <div className="input-group mb-3">
+                                            <input className="form-control" {...input} type="file" placeholder="image"></input>
+                                        <div className="input-group-append">
+                                        <div className="input-group-text">
+                                            <span className="fas fa-info"></span>
+                                        </div>
+                                        {meta.error && meta.touched && <span>{meta.error}</span>}
+                                        </div>
+                                    </div>
+                                    )}
+                                </Field> */}
+                                <FileField name="files" />
+                                <Field name="status" component='select' validate={required}>
+                                    {({input,meta}) => (
+                                        <div className="input-group mb-3">
+                                            <select {...input} className="form-select">
+                                                <option value="">Select Status</option>
+                                                <option value="1" defaultValue>Active</option>
+                                                <option value="0">Inactive</option>
+
+                                            </select>
+                                        <div className="input-group-append">
+                                        {meta.error && meta.touched && <span>{meta.error}</span>}
+                                        </div>
+                                    </div>
+                                    )}
+                                </Field>
+                                <div className="buttons">
+                                    <button type="submit" disabled={submitting || pristine}>
+                                    Submit
+                                    </button>
+                                    <button
+                                    type="button"
+                                    onClick={form.reset}
+                                    disabled={submitting || pristine}
+                                    >
+                                    Reset
+                                    </button>
+                                </div>
+                            </form>
+                        )}
+                    />
+                    </ModalBody>
+                </Modal>
+                </div>
+            
+        )
+    }
+}
+
+class Delete extends Component {
+    constructor(props) {
+        super(props);
+        
+        this.state = {
+            isModalOpen: false
+        }
+        this.addtoggleModal = this.addtoggleModal.bind(this);
+    }
+
+    addtoggleModal() {
+        this.setState({isModalOpen: !this.state.isModalOpen})
+    }
+    
+    render() {
+        const required = value => (value ? undefined : 'Required')
+        const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+
+        const onSubmit = async values => {
+            await sleep(300)
+            this.props.deleteBoard(this.props.boardid)
+            .then(response => {
+                console.log(response);
+                if(response.status) {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Board Delete Successfully',
+                        showConfirmButton: false,
+                        timer: 1500
+                      });
+                      this.addtoggleModal();
+                }
+                else {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'error',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                      })
+                }
+                })
+            .catch(error => {console.log('Post Board', error.message);
+                    alert('Your Board could not be posted\nError: '+ error.message)})
+            
+            
+        }
+        return (
+            <div className="row">
+            <a className="btn btn-app" onClick={this.addtoggleModal}>
+                  <i className="fas fa-trash"></i> Delete
+            </a>
+            <Modal className="modal-lg" isOpen={this.state.isModalOpen} toggle={this.addtoggleModal}>
+                    <ModalHeader toggle={this.addtoggleModal}>Delete Board!</ModalHeader>
+                    <ModalBody>
+                        <p>Are you sure you want to delete!</p>
+                    <Form onSubmit={onSubmit} intialvalues={{}} 
+                        render={({handleSubmit,form, submitting, pristine, values}) => (
+                            <form onSubmit={handleSubmit}>
+                                <div className="modal-footer justify-content-between">
+                                    <button type="button" onClick={this.addtoggleModal} className="btn btn-default btn-close" aria-label="Close" data-dismiss="modal">Close</button>
+                                    <button type="submit" className="btn btn-danger">Delete</button>
+                                </div>
+                            </form>
+                        )}
+                    />
+                    </ModalBody>
+                </Modal>
+            </div>
+            
+        )
+    }
+}
+
+
+
 export default BoardPage;

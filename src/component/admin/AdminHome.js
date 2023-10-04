@@ -9,7 +9,7 @@ import AuthService from '../../services/auth.service';
 import { connect } from "react-redux";
 import { withRouter } from "../../common/with-router.js";
 import BoardPage from "./Contents/BoardsPage.js";
-import { fetchBoards,postBoard } from '../../redux/ActionCreators';
+import { fetchBoards,postBoard,deleteBoard,editBoard } from '../../redux/ActionCreators';
 
 const mapStateToProps = state => {
   return {
@@ -20,6 +20,9 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch) => ({
   postBoard: (name, short_name, position, image,status) => dispatch(postBoard(name, short_name, position, image,status)),
   fetchBoards: () => {dispatch(fetchBoards())},
+  deleteBoard:(boardid) => dispatch(deleteBoard(boardid)),
+  editBoard: (name, short_name, position, image,status) => dispatch(editBoard(name, short_name, position, image,status)),
+
 })
 
 
@@ -88,7 +91,8 @@ class AdminHome extends Component {
                 <Routes>
                     <Route path="/boards" element={<BoardPage boards={this.props.boards.boards} 
                       boardsLoading={this.props.boards.isLoading}
-                      boardErrMess={this.props.boards.errMess} addstatus={this.props.boards.addstatus} postBoard={this.props.postBoard} title='Borad List'></BoardPage>}  />
+                      boardErrMess={this.props.boards.errMess} addstatus={this.props.boards.addstatus} postBoard={this.props.postBoard}
+                      deleteBoard={this.props.deleteBoard} editBoard={this.props.editBoard} title='Borad List'></BoardPage>}  />
                 </Routes>
                 <Footer/>
                 

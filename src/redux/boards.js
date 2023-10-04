@@ -14,6 +14,10 @@ export const Boards = (state = {isLoading: true,
         case ActionTypes.ADD_NEWBOARD:
             var board = action.payload;
             return {...state,addstatus: true, boards:state.boards.concat(board)}
+        case ActionTypes.DELETE_BOARD:
+            return {...state,addstatus: true, boards:action.payload}
+        case ActionTypes.EDIT_BOARD:
+            return {...state,addstatus: true, boards:action.payload}
         default:
             return state;
     }

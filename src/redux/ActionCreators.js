@@ -83,3 +83,80 @@ export const addNewBoard = (board) => ({
     // send back
     payload: board
 });
+
+export const deleteBoard = (boardid) => (dispatch) => {
+    const board = {
+        boardId: boardid,
+    }
+    var header = {
+        'Content-Type': 'application/json',
+        'Authorization': authHeader().Authorization
+    }
+    return fetch(baseUrl + 'admin/delete-board', {
+        method: 'POST',
+        body: JSON.stringify(board),
+        headers: header,
+        credentials: 'same-origin'
+    })
+    .then(response => {
+        if(response.ok) {
+            return response;
+        }
+        else {
+            var error = new Error('Error: ' + response.status + ': '+ response.statusText);
+            error.response = response;
+            throw error;
+        }
+    },
+    error => {
+        var errmess = new Error(error.message)
+        throw errmess
+    })
+    .then(response => response.json())
+    .then(response => {dispatch(fetchBoards());
+        return response;
+    })
+    .catch(error => {console.log('Post Board', error.message);
+            return ({"status":false,"message":error.message})})
+    
+}
+
+export const editBoard = (name, short_name, position, image, status) => (dispatch) => {
+    const newBoard = new FormData();
+    newBoard.append("name", name);
+    newBoard.append("short_name", short_name);
+    newBoard.append("position", position);
+    newBoard.append("status", status);
+    var url = 'admin/editBoard';
+    if(image) {
+        url = 'edit-board-withimage';
+        newBoard.append("image", image);
+    }
+    return fetch(baseUrl + url, {
+        method: 'POST',
+        body: newBoard,
+        headers: authHeader(),
+        credentials: 'same-origin'
+    })
+    .then(response => {
+        if(response.ok) {
+            return response;
+        }
+        else {
+            var error = new Error('Error: ' + response.status + ': '+ response.statusText);
+            error.response = response;
+            throw error;
+        }
+    },
+    error => {
+        var errmess = new Error(error.message)
+        throw errmess
+    })
+    .then(response => response.json())
+    .then(response => {dispatch(addNewBoard(response));
+        return response;
+    })
+    .catch(error => {console.log('Post Board', error.message);
+            return ({"status":false,"message":error.message})})
+    
+}
