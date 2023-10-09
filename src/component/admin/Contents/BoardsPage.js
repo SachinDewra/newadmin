@@ -274,13 +274,23 @@ class Edit extends Component {
         super(props);
         
         this.state = {
-            isModalOpen: false
+            isModalOpen: false,
+            name: this.props.board.name,
+            short_name: this.props.board.short_name,
+            position: this.props.board.position,
+            status: this.props.board.status,
         }
         this.addtoggleModal = this.addtoggleModal.bind(this);
+        
     }
 
     addtoggleModal() {
         this.setState({isModalOpen: !this.state.isModalOpen})
+    }
+    
+    inputChangedHandler = (event) => {
+        const updatedKeyword = event.target.value;
+        // May be call for search result
     }
 
     render() {
@@ -289,14 +299,19 @@ class Edit extends Component {
 
         const onSubmit = async values => {
             await sleep(300)
-            this.props.postBoard(values.name,
-                 values.short_name,values.position,values.files[0],values.status)
+            console.log(values);
+            var fileis = '';
+            if(values.files) {
+                var fileis = values.files[0];  
+            }
+            this.props.editBoard(values.name,
+                 values.short_name,values.position,fileis,values.status,this.props.board._id)
             .then(response => {
                 if(response.status) {
                     Swal.fire({
                         position: 'top-end',
                         icon: 'success',
-                        title: 'Board Add Successfully',
+                        title: 'Board Edit Successfully',
                         showConfirmButton: false,
                         timer: 1500
                       });
@@ -313,11 +328,13 @@ class Edit extends Component {
                 }
                 })
             .catch(error => {console.log('Post Board', error.message);
-                    alert('Your Board could not be posted\nError: '+ error.message)})
+                    alert('Your Board could not be Updated\nError: '+ error.message)})
             
             
         }
         
+        
+
         return (
             
             <div className="row">
@@ -327,13 +344,14 @@ class Edit extends Component {
             <Modal className="modal-lg" isOpen={this.state.isModalOpen} toggle={this.addtoggleModal}>
                     <ModalHeader toggle={this.addtoggleModal}>Edit Board</ModalHeader>
                     <ModalBody>
-                    <Form onSubmit={onSubmit} intialvalues={{name:this.props.board.name}} 
+                    <Form onSubmit={onSubmit} intialvalues={{name:this.props.board.name,short_name:this.props.board.short_name,
+                    position:this.props.board.position,status:this.props.board.status}} initialValuesEqual={() => true}
                         render={({handleSubmit,form, submitting, pristine, values}) => (
                             <form onSubmit={handleSubmit}>
-                                <Field initialValue={initialValue.name} name="name" validate={required}>
+                                <Field name="name">
                                     {({input,meta}) => (
                                         <div className="input-group mb-3">
-                                            <input value={values.name} className="form-control" type="text" placeholder="Name"></input>
+                                            <input defaultValue={this.state.name}  className="form-control" type="text" placeholder="Name"></input>
                                         <div className="input-group-append">
                                         <div className="input-group-text">
                                             <span className="fas fa-info"></span>
@@ -343,10 +361,10 @@ class Edit extends Component {
                                     </div>
                                     )}
                                 </Field>
-                                <Field name="short_name" validate={required}>
+                                <Field name="short_name">
                                     {({input,meta}) => (
                                         <div className="input-group mb-3">
-                                            <input className="form-control" {...input} type="text" placeholder="Short Name"></input>
+                                            <input defaultValue={this.props.board.short_name} className="form-control" type="text" placeholder="Short Name"></input>
                                         <div className="input-group-append">
                                         <div className="input-group-text">
                                             <span className="fas fa-info"></span>
@@ -356,10 +374,10 @@ class Edit extends Component {
                                     </div>
                                     )}
                                 </Field>
-                                <Field name="position" validate={required}>
+                                <Field name="position" >
                                     {({input,meta}) => (
                                         <div className="input-group mb-3">
-                                            <input className="form-control" {...input} type="number" placeholder="Position" min={1}></input>
+                                            <input defaultValue={this.props.board.position}  className="form-control" type="number" placeholder="Position" min={1}></input>
                                         <div className="input-group-append">
                                         <div className="input-group-text">
                                             <span className="fas fa-info"></span>
@@ -383,12 +401,12 @@ class Edit extends Component {
                                     )}
                                 </Field> */}
                                 <FileField name="files" />
-                                <Field name="status" component='select' validate={required}>
+                                <Field name="status" component='select'>
                                     {({input,meta}) => (
                                         <div className="input-group mb-3">
-                                            <select {...input} className="form-select">
+                                            <select defaultValue={this.props.board.status} className="form-select">
                                                 <option value="">Select Status</option>
-                                                <option value="1" defaultValue>Active</option>
+                                                <option value="1" >Active</option>
                                                 <option value="0">Inactive</option>
 
                                             </select>
@@ -399,15 +417,8 @@ class Edit extends Component {
                                     )}
                                 </Field>
                                 <div className="buttons">
-                                    <button type="submit" disabled={submitting || pristine}>
-                                    Submit
-                                    </button>
-                                    <button
-                                    type="button"
-                                    onClick={form.reset}
-                                    disabled={submitting || pristine}
-                                    >
-                                    Reset
+                                    <button type="submit">
+                                    Update
                                     </button>
                                 </div>
                             </form>

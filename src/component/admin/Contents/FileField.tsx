@@ -10,7 +10,7 @@ const FileField = ({ name, ...props }: Props) => (
   <Field<FileList> name={name}>
     {({ input: { value, onChange, ...input } }) => (
       <div className="input-group mb-3">
-      <input required className="form-control"
+      <input className="form-control"
         {...input}
         type="file"
         onChange={({ target }) => onChange(target.files)} 

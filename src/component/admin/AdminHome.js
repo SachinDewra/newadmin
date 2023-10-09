@@ -21,7 +21,7 @@ const mapDispatchToProps = (dispatch) => ({
   postBoard: (name, short_name, position, image,status) => dispatch(postBoard(name, short_name, position, image,status)),
   fetchBoards: () => {dispatch(fetchBoards())},
   deleteBoard:(boardid) => dispatch(deleteBoard(boardid)),
-  editBoard: (name, short_name, position, image,status) => dispatch(editBoard(name, short_name, position, image,status)),
+  editBoard: (name, short_name, position, image,status,boardid) => dispatch(editBoard(name, short_name, position, image,status,boardid)),
 
 })
 

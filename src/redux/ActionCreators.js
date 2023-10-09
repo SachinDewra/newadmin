@@ -121,13 +121,14 @@ export const deleteBoard = (boardid) => (dispatch) => {
     
 }
 
-export const editBoard = (name, short_name, position, image, status) => (dispatch) => {
+export const editBoard = (name, short_name, position, image, status,boardid) => (dispatch) => {
     const newBoard = new FormData();
     newBoard.append("name", name);
     newBoard.append("short_name", short_name);
     newBoard.append("position", position);
     newBoard.append("status", status);
-    var url = 'admin/editBoard';
+    newBoard.append("boardId", boardid);
+    var url = 'admin/edit-board';
     if(image) {
         url = 'edit-board-withimage';
         newBoard.append("image", image);
