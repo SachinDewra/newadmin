@@ -130,7 +130,7 @@ export const editBoard = (name, short_name, position, image, status,boardid) => 
     newBoard.append("boardId", boardid);
     var url = 'admin/edit-board';
     if(image) {
-        url = 'edit-board-withimage';
+        url = 'admin/edit-board-withimage';
         newBoard.append("image", image);
     }
     return fetch(baseUrl + url, {
@@ -154,7 +154,7 @@ export const editBoard = (name, short_name, position, image, status,boardid) => 
         throw errmess
     })
     .then(response => response.json())
-    .then(response => {dispatch(addNewBoard(response));
+    .then(response => {dispatch(fetchBoards(response));
         return response;
     })
     .catch(error => {console.log('Post Board', error.message);

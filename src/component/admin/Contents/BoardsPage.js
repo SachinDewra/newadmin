@@ -344,14 +344,20 @@ class Edit extends Component {
             <Modal className="modal-lg" isOpen={this.state.isModalOpen} toggle={this.addtoggleModal}>
                     <ModalHeader toggle={this.addtoggleModal}>Edit Board</ModalHeader>
                     <ModalBody>
-                    <Form onSubmit={onSubmit} intialvalues={{name:this.props.board.name,short_name:this.props.board.short_name,
-                    position:this.props.board.position,status:this.props.board.status}} initialValuesEqual={() => true}
-                        render={({handleSubmit,form, submitting, pristine, values}) => (
+                    <Form onSubmit={onSubmit} 
+                        initialValues={{
+                            name: this.props.board.name,
+                            short_name: this.props.board.short_name,
+                            position: this.props.board.position,
+                            status: this.props.board.status
+                          }}
+                          initialValuesEqual={() => true}
+                        render={({handleSubmit}) => (
                             <form onSubmit={handleSubmit}>
                                 <Field name="name">
                                     {({input,meta}) => (
                                         <div className="input-group mb-3">
-                                            <input defaultValue={this.state.name}  className="form-control" type="text" placeholder="Name"></input>
+                                            <input {...input}  className="form-control" type="text" placeholder="Name"></input>
                                         <div className="input-group-append">
                                         <div className="input-group-text">
                                             <span className="fas fa-info"></span>
@@ -364,7 +370,7 @@ class Edit extends Component {
                                 <Field name="short_name">
                                     {({input,meta}) => (
                                         <div className="input-group mb-3">
-                                            <input defaultValue={this.props.board.short_name} className="form-control" type="text" placeholder="Short Name"></input>
+                                            <input {...input} className="form-control" type="text" placeholder="Short Name"></input>
                                         <div className="input-group-append">
                                         <div className="input-group-text">
                                             <span className="fas fa-info"></span>
@@ -377,7 +383,7 @@ class Edit extends Component {
                                 <Field name="position" >
                                     {({input,meta}) => (
                                         <div className="input-group mb-3">
-                                            <input defaultValue={this.props.board.position}  className="form-control" type="number" placeholder="Position" min={1}></input>
+                                            <input {...input} className="form-control" type="number" placeholder="Position" min={1}></input>
                                         <div className="input-group-append">
                                         <div className="input-group-text">
                                             <span className="fas fa-info"></span>
@@ -404,7 +410,7 @@ class Edit extends Component {
                                 <Field name="status" component='select'>
                                     {({input,meta}) => (
                                         <div className="input-group mb-3">
-                                            <select defaultValue={this.props.board.status} className="form-select">
+                                            <select {...input} className="form-select">
                                                 <option value="">Select Status</option>
                                                 <option value="1" >Active</option>
                                                 <option value="0">Inactive</option>
