@@ -22,3 +22,4 @@ export const Boards = (state = {isLoading: true,
             return state;
     }
 }
+

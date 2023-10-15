@@ -71,6 +71,12 @@ class Sidebar extends Component {
                     </NavLink>
                 </li>
                 <li className="nav-item">
+                    <NavLink className="nav-link" to="/subjects">
+                    <i className="nav-icon fas fa-edit"></i>
+                    <p>Subject</p>
+                    </NavLink>
+                </li>
+                <li className="nav-item">
                     <a href="/" onClick={this.logOut} className="nav-link">
                     <i className="far fa-circle nav-icon"></i>
                     <p>Logout</p>

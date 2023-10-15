@@ -9,11 +9,14 @@ import AuthService from '../../services/auth.service';
 import { connect } from "react-redux";
 import { withRouter } from "../../common/with-router.js";
 import BoardPage from "./Contents/BoardsPage.js";
-import { fetchBoards,postBoard,deleteBoard,editBoard } from '../../redux/ActionCreators';
+import SubjectPage from "./Contents/SubjectPage.js";
+import { fetchBoards,postBoard,deleteBoard,editBoard
+        ,fetchSubject,postSubject,deleteSubject,editSubject } from '../../redux/ActionCreators';
 
 const mapStateToProps = state => {
   return {
-    boards: state.boards
+    boards: state.boards,
+    subjects: state.subjects
   }
 }
 
@@ -22,7 +25,11 @@ const mapDispatchToProps = (dispatch) => ({
   fetchBoards: () => {dispatch(fetchBoards())},
   deleteBoard:(boardid) => dispatch(deleteBoard(boardid)),
   editBoard: (name, short_name, position, image,status,boardid) => dispatch(editBoard(name, short_name, position, image,status,boardid)),
-
+  fetchSubject: () => {dispatch(fetchSubject())},
+  postSubject: (name, position, image,iastatus) => dispatch(postSubject(name, position, image,iastatus)),
+  deleteSubject:(boardid) => dispatch(deleteSubject(boardid)),
+  editSubject: (name, position, image,iastatus,id) => dispatch(editSubject(name, position, image,iastatus,id)),
+  
 })
 
 
@@ -65,6 +72,8 @@ class AdminHome extends Component {
             this.logOut();
         });
         this.props.fetchBoards();
+        this.props.fetchSubject();
+
     }
 
     componentWillUnmount() {
@@ -93,6 +102,12 @@ class AdminHome extends Component {
                       boardsLoading={this.props.boards.isLoading}
                       boardErrMess={this.props.boards.errMess} addstatus={this.props.boards.addstatus} postBoard={this.props.postBoard}
                       deleteBoard={this.props.deleteBoard} editBoard={this.props.editBoard} title='Borad List'></BoardPage>}  />
+                    <Route title={'Subject'} path="/subjects" element={<SubjectPage subject={this.props.subjects.subjects} 
+                        subjectLoading={this.props.subjects.isLoading}
+                        subjectErrMess={this.props.subjects.errMess} 
+                        postSubject={this.props.postSubject}
+                        deleteSubject={this.props.deleteSubject} editSubject={this.props.editSubject} 
+                       title='Subject List'></SubjectPage>}  />
                 </Routes>
                 <Footer/>
                 
