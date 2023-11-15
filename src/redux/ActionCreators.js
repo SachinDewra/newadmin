@@ -322,3 +322,162 @@ export const editSubject = (name, position, image, status,id) => (dispatch) => {
     
 }
 
+// Series
+export const fetchSeries = () => (dispatch) => {
+    dispatch(seriesLoading(true));
+    return fetch(baseUrl + 'admin/series', {
+                    method: "GET",
+                    headers: authHeader()
+                })
+                .then(response => {
+                    if(response.ok) {
+                        return response;
+                    }
+                    else {
+                        var error = new Error('Error: ' + response.status + ': '+ response.statusText);
+                        error.response = response;
+                        throw error;
+                    }
+                },
+                error => {
+                    var errmess = new Error(error.message)
+                    throw errmess
+                })
+                .then(response => response.json())
+                .then(series => dispatch(addSeries(series)))
+                .catch(error => dispatch(seriesFailed(error.message)));
+}
+
+export const seriesLoading = () => ({
+    type: ActionTypes.SERIES_LODING
+})
+
+export const seriesFailed = (errmess) => ({
+    type: ActionTypes.SERIES_FAILED,
+    payload: errmess
+})
+
+export const addSeries = (series) => ({
+    type: ActionTypes.ADD_SERIES,
+    payload: series
+})
+
+// export const postSubject = (name, position, image, status) => (dispatch) => {
+//     const newData = new FormData();
+//     newData.append("image", image);
+//     newData.append("name", name);
+//     newData.append("position", position);
+//     newData.append("iastatus", status);
+
+//     return fetch(baseUrl + 'admin/add-subject', {
+//         method: 'POST',
+//         body: newData,
+//         headers: authHeader(),
+//         credentials: 'same-origin'
+//     })
+//     .then(response => {
+//         if(response.ok) {
+//             return response;
+//         }
+//         else {
+//             var error = new Error('Error: ' + response.status + ': '+ response.statusText);
+//             error.response = response;
+//             throw error;
+//         }
+//     },
+//     error => {
+//         var errmess = new Error(error.message)
+//         throw errmess
+//     })
+//     .then(response => response.json())
+//     .then(response => {dispatch(addNewSubject(response));
+//         return response;
+//     })
+//     .catch(error => {console.log('Post Subject', error.message);
+//             return ({"status":false,"message":error.message})})
+    
+// }
+
+// export const addNewSubject = (board) => ({
+//     type: ActionTypes.ADD_NEWSUBJECT,
+//     // send back
+//     payload: board
+// });
+
+// export const deleteSubject = (id) => (dispatch) => {
+//     const s = {
+//         SubjectId: id,
+//     }
+//     var header = {
+//         'Content-Type': 'application/json',
+//         'Authorization': authHeader().Authorization
+//     }
+//     return fetch(baseUrl + 'admin/delete-subject', {
+//         method: 'POST',
+//         body: JSON.stringify(s),
+//         headers: header,
+//         credentials: 'same-origin'
+//     })
+//     .then(response => {
+//         if(response.ok) {
+//             return response;
+//         }
+//         else {
+//             var error = new Error('Error: ' + response.status + ': '+ response.statusText);
+//             error.response = response;
+//             throw error;
+//         }
+//     },
+//     error => {
+//         var errmess = new Error(error.message)
+//         throw errmess
+//     })
+//     .then(response => response.json())
+//     .then(response => {dispatch(fetchSubject());
+//         return response;
+//     })
+//     .catch(error => {console.log('Post Subject', error.message);
+//             return ({"status":false,"message":error.message})})
+    
+// }
+
+// export const editSubject = (name, position, image, status,id) => (dispatch) => {
+//     const newData = new FormData();
+//     newData.append("name", name);
+//     newData.append("position", position);
+//     newData.append("iastatus", status);
+//     newData.append("SubjectId", id);
+//     var url = 'admin/edit-subject';
+//     if(image) {
+//         url = 'admin/edit-subject-withimage';
+//         newData.append("image", image);
+//     }
+//     return fetch(baseUrl + url, {
+//         method: 'POST',
+//         body: newData,
+//         headers: authHeader(),
+//         credentials: 'same-origin'
+//     })
+//     .then(response => {
+//         if(response.ok) {
+//             return response;
+//         }
+//         else {
+//             var error = new Error('Error: ' + response.status + ': '+ response.statusText);
+//             error.response = response;
+//             throw error;
+//         }
+//     },
+//     error => {
+//         var errmess = new Error(error.message)
+//         throw errmess
+//     })
+//     .then(response => response.json())
+//     .then(response => {dispatch(fetchSubject(response));
+//         return response;
+//     })
+//     .catch(error => {console.log('Post Subject', error.message);
+//             return ({"status":false,"message":error.message})})
+    
+// }
+

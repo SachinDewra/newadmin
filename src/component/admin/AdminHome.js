@@ -10,13 +10,15 @@ import { connect } from "react-redux";
 import { withRouter } from "../../common/with-router.js";
 import BoardPage from "./Contents/BoardsPage.js";
 import SubjectPage from "./Contents/SubjectPage.js";
+import SeriesPage from "./Contents/SeriesPage";
 import { fetchBoards,postBoard,deleteBoard,editBoard
-        ,fetchSubject,postSubject,deleteSubject,editSubject } from '../../redux/ActionCreators';
+        ,fetchSubject,postSubject,deleteSubject,editSubject, fetchSeries } from '../../redux/ActionCreators';
 
 const mapStateToProps = state => {
   return {
     boards: state.boards,
-    subjects: state.subjects
+    subjects: state.subjects,
+    series: state.series
   }
 }
 
@@ -29,6 +31,10 @@ const mapDispatchToProps = (dispatch) => ({
   postSubject: (name, position, image,iastatus) => dispatch(postSubject(name, position, image,iastatus)),
   deleteSubject:(boardid) => dispatch(deleteSubject(boardid)),
   editSubject: (name, position, image,iastatus,id) => dispatch(editSubject(name, position, image,iastatus,id)),
+  fetchSeries: () => {dispatch(fetchSeries())},
+  postSeries: (name, position, image,iastatus) => dispatch(postSeries(name, position, image,iastatus)),
+  deleteSeries:(seriesid) => dispatch(deleteSeries(seriesid)),
+  editSeries: (name,descrition, position, board_id,subject_id,iastatus,id) => dispatch(editSeries(name,descrition, position, board_id,subject_id,iastatus,id)),
   
 })
 
@@ -73,6 +79,8 @@ class AdminHome extends Component {
         });
         this.props.fetchBoards();
         this.props.fetchSubject();
+        this.props.fetchSeries();
+
 
     }
 
@@ -88,6 +96,7 @@ class AdminHome extends Component {
       }
     
     render() {
+        
         if (this.state.redirect) {
             return <Navigate to={this.state.redirect} />
         }
@@ -108,6 +117,14 @@ class AdminHome extends Component {
                         postSubject={this.props.postSubject}
                         deleteSubject={this.props.deleteSubject} editSubject={this.props.editSubject} 
                        title='Subject List'></SubjectPage>}  />
+                    <Route title={'Series'} path="/series" element={<SeriesPage subject={this.props.subjects.subjects}
+                        boards={this.props.boards.boards} 
+                        series={this.props.series.series} 
+                        seriesLoading={this.props.series.isLoading}
+                        seriesErrMess={this.props.series.errMess} 
+                        postSeries={this.props.postSeries}
+                        deleteSeries={this.props.deleteSeries} editSeries={this.props.editSeries} 
+                       title='Series List'></SeriesPage>}  />
                 </Routes>
                 <Footer/>
                 
